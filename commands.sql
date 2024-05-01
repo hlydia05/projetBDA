@@ -189,35 +189,36 @@ create or replace type body Tmarque as
 -- Création de la table pour le type Tmarque
 CREATE TABLE Marques OF Tmarque (
    constraint pk_marques primary key(nom)
-) NESTED TABLE MARQUE_MODELES STORE AS Modeles_table;
+) NESTED TABLE MARQUE_MODELES STORE AS marque_modeles_table;
 
 -- Création de la table pour le type Tmodele  
 CREATE TABLE Modeles OF Tmodele (
    constraint pk_modeles primary key(nom)
-) NESTED TABLE MODELE_VEHICULES STORE AS Vehicules_table;
+) NESTED TABLE MODELE_VEHICULES STORE AS modele_vehicules_table;
 
 -- Création de la table pour le type Tclient
 CREATE TABLE Clients OF Tclient (
     constraint pk_clients primary key(nom)
-) NESTED TABLE CLIENT_VEHICULES STORE AS Vehicules_table;
+) NESTED TABLE CLIENT_VEHICULES STORE AS client_vehicules_table;
 
 -- Création de la table pour le type Tvehicule
 CREATE TABLE Vehicules OF Tvehicule (
     constraint pk_vehicules primary key(nom)
-) NESTED TABLE VEHICULE_INTERVENTIONS STORE AS Interventions_table;
+) NESTED TABLE VEHICULE_INTERVENTIONS STORE AS vehicule_interventions_table;
 
 -- Création de la table pour le type Temploye
 CREATE TABLE Employes OF Temploye (
     constraint pk_employes primary key(nom)
-) NESTED TABLE EMPLOYE_INTERVENANTS STORE AS Intervenants_table;
+) NESTED TABLE EMPLOYE_INTERVENANTS STORE AS employe_intervenants_table;
+NESTED TABLE EMPLOYE_INTERVENTIONS STORE AS employe_interventions_table;
 
 -- Création de la table pour le type Tinterventions  
 CREATE TABLE Interventions OF Tinterventions (
     constraint pk_interventions primary key(nom)
-) NESTED TABLE INTERVENTION_INTERVENANTS STORE AS Intervenants_table
-  NESTED TABLE INTERVENTION_EMPLOYES STORE AS Employes_table;
+) NESTED TABLE INTERVENTION_INTERVENANTS STORE AS intervention_intervenants_table
+  NESTED TABLE INTERVENTION_EMPLOYES STORE AS intervention_employes_table;
 
 -- Création de la table pour le type Tintervenants 
 CREATE TABLE Intervenants OF Tintervenants (
     constraint pk_intervenant primary key(nom)
-) NESTED TABLE PRIMARY KEY NESTED;
+) 
