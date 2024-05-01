@@ -222,3 +222,16 @@ CREATE TABLE Interventions OF Tinterventions (
 CREATE TABLE Intervenants OF Tintervenants (
     constraint pk_intervenant primary key(nom)
 ) 
+
+
+/*E- Langage d’interrogation de données*/
+/*9. Lister les modèles et leur marque.*/
+SELECT m.MODELE, ma.MARQUE FROM Modeles m, Marques ma WHERE m.NUMMARQUE = ma.NUMMARQUE;
+/*10. Lister les véhicules sur lesquels, il y a au moins une intervention.*/
+SELECT DISTINCT v.NUMVEHICULE FROM Vehicules v, TABLE(v.VEHICULE_INTERVENTIONS) i;
+/*11. Quelle est la durée moyenne d’une intervention?*/
+SELECT AVG(DATEFININTERV - DATEDEBINTERV) AS duree_moyenne FROM Interventions;
+/*12. Donner le montant global des interventions dont le coût d’intervention est supérieur à 30000 DA?*/
+SELECT SUM(COUTINTERV) AS montant_global FROM Interventions WHERE COUTINTERV > 30000;
+/*13. Donner la liste des employés ayant fait le plus grand nombre d’interventions.*/
+SELECT e.NOMEMP, e.PRENOMEMP, e.nb_interventions() AS nb_interventions FROM Employes e WHERE e.nb_interventions() = (SELECT MAX(e2.nb_interventions()) FROM Employes e2);
