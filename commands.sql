@@ -26,7 +26,9 @@ create or replace type Tintervenants as object (
 NUMINTERVENTION ref Tinterventions,
 NUMEMPLOYE ref Temploye,
 DATEDEBUT DATE,
-DATEFIN DATE
+DATEFIN DATE,
+INTERVENANT_EMPLOYES ref Temploye,
+INTERVENANT_INTERVENTION ref TNTERVENTION,
 );
 /
 
@@ -38,7 +40,7 @@ NOMEMP varchar2(20),
 PRENOMEMP varchar2(20),
 CATEGORIE varchar2(20),
 SALAIRE float,
-EMPLOYE_INTERVENANTS ref Tintervenants
+EMPLOYE_INTERVENANTS tset_intervenants
 );
 /
 
@@ -51,7 +53,7 @@ TYPEINTERVENTION varchar2(20),
 DATEDEBINTERV date,
 DATEFININTERV date,
 COUTINTERV float,
-INTERVENTION_INTERVENANTS ref Tintervenants,
+INTERVENTION_INTERVENANTS tset_intervenants,
 INTERVENTION_EMPLOYES tset_employes
 );
 /
