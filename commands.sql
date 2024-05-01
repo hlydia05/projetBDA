@@ -183,3 +183,69 @@ create or replace type body Tmarque as
 	  END chiffre_affaire;
 	END;
 	/
+
+
+/* 7. Définir les tables nécessaires à la base de données.*/
+-- Création de la table pour le type Tmarque
+CREATE TABLE Marques OF Tmarque (
+    NUMMARQUE PRIMARY KEY,
+    MARQUE NOT NULL,
+    PAYS NOT NULL
+) NESTED TABLE MARQUE_MODELES STORE AS Modeles_table;
+
+-- Création de la table pour le type Tmodele  
+CREATE TABLE Modeles OF Tmodele (
+    NUMMODELE PRIMARY KEY,
+    NUMMARQUE WITH ROWID REFERENCES Marques,
+    MODELE NOT NULL
+) NESTED TABLE MODELE_VEHICULES STORE AS Vehicules_table;
+
+-- Création de la table pour le type Tclient
+CREATE TABLE Clients OF Tclient (
+    NUMCLIENT PRIMARY KEY, 
+    CIV NOT NULL,
+    PRENOMCLIENT NOT NULL,
+    NOMCLIENT NOT NULL,
+    DATENAISSANCE DATE,
+    ADRESSE NOT NULL,
+    TELPROF VARCHAR2(20),
+    TELPRIV VARCHAR2(20),
+    FAX VARCHAR2(20)
+) NESTED TABLE CLIENT_VEHICULES STORE AS Vehicules_table;
+
+-- Création de la table pour le type Tvehicule
+CREATE TABLE Vehicules OF Tvehicule (
+    NUMVEHICULE PRIMARY KEY,
+    NUMCLIENT WITH ROWID REFERENCES Clients, 
+    NUMMODELE WITH ROWID REFERENCES Modeles,
+    NUMIMMAT NOT NULL UNIQUE,
+    ANNEE NOT NULL
+) NESTED TABLE VEHICULE_INTERVENTIONS STORE AS Interventions_table;
+
+-- Création de la table pour le type Temploye
+CREATE TABLE Employes OF Temploye (
+    NUMEMPLOYE PRIMARY KEY,
+    NOMEMP NOT NULL,
+    PRENOMEMP NOT NULL,
+    CATEGORIE NOT NULL,
+    SALAIRE NOT NULL
+) NESTED TABLE EMPLOYE_INTERVENANTS STORE AS Intervenants_table;
+
+-- Création de la table pour le type Tinterventions  
+CREATE TABLE Interventions OF Tinterventions (
+    NUMINTERVENTION PRIMARY KEY,
+    NUMVEHICULE WITH ROWID REFERENCES Vehicules,
+    TYPEINTERVENTION NOT NULL,
+    DATEDEBINTERV NOT NULL,
+    DATEFININTERV NOT NULL,
+    COUTINTERV NOT NULL
+) NESTED TABLE INTERVENTION_INTERVENANTS STORE AS Intervenants_table
+  NESTED TABLE INTERVENTION_EMPLOYES STORE AS Employes_table;
+Vous avez envoyé
+CREATE TABLE Intervenants OF Tintervenants (
+    NUMINTERVENTION WITH ROWID REFERENCES Interventions,
+    NUMEMPLOYE WITH ROWID REFERENCES Employes,
+    DATEDEBUT NOT NULL,
+    DATEFIN NOT NULL,
+    PRIMARY KEY (NUMINTERVENTION, NUMEMPLOYE)
+) NESTED TABLE PRIMARY KEY NESTED;
