@@ -26,9 +26,7 @@ create or replace type Tintervenants as object (
 NUMINTERVENTION ref Tinterventions,
 NUMEMPLOYE ref Temploye,
 DATEDEBUT DATE,
-DATEFIN DATE,
-INTERVENANT_EMPLOYES ref Temploye,
-INTERVENANT_INTERVENTION ref TNTERVENTION,
+DATEFIN DATE
 );
 /
 
