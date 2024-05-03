@@ -118,3 +118,45 @@ cas.
     }
   ]
 }
+
+
+exemple3:
+
+{
+  "numVehicule" : 15,
+  "immatriculation" : "6254319916",
+  "annee" : 1999,
+  "marque" : {
+    "numMarque" : 4,
+    "marque" : "BMW",
+    "pays" : "ALLEMAGNE"
+  },
+  "interventions" : [
+    {
+      "numIntervention" : 1234,
+      "typeIntervention" : "Réparation",
+      "dateDebut" : ISODate("2022-03-15T08:00:00Z"),
+      "dateFin" : ISODate("2022-03-18T16:00:00Z"),
+      "cout" : 45000,
+      "employes" : [
+        {
+          "numEmploye" : 53,
+          "nomEmploye" : "LACHEMI",
+          "prenomEmploye" : "Bouzid",
+          "categorieEmploye" : "Mécanicien",
+          "salaiereEmploye" : 25000
+        },
+        {
+          "numEmploye" : 59,
+          "nomEmploye" : "BELHAMIDI",
+          "prenomEmploye" : "Mourad", 
+          "categorieEmploye" : "Mécanicien",
+          "salaiereEmploye" : 19500
+        }
+      ]
+    }
+  ]
+}
+
+Justification du choix de conception :
+Cette modélisation orientée document est appropriée car elle permet de représenter naturellement les relations entre les différentes entités (véhicule, marque, interventions, employés). En imbriquant les données liées dans un même document, on évite les jointures coûteuses des bases de données relationnelles. De plus, cette structure est bien adaptée aux requêtes qui portent principalement sur les véhicules et leurs interventions.
