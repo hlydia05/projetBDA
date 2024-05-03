@@ -492,13 +492,7 @@ insert into table(select e.INTERVENTION_EMPLOYES from Interventions i where i.NU
 insert into table(select e.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=15) (select ref(e) from Employes e, Intervenants it where it.NUMINTERVENTION=15 AND e.NUMEMPLOYE=it.NUMEMPLOYE);
 insert into table(select e.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=16) (select ref(e) from Employes e, Intervenants it where it.NUMINTERVENTION=16 AND e.NUMEMPLOYE=it.NUMEMPLOYE);
  /*NTERVENTION_INTERVENANTS*/
-INSERT INTO TABLE (SELECT i.INTERVENTION_INTERVENANTS
-                   FROM Interventions i
-                   WHERE i.NUMINTERVENTION = 1)
-(SELECT Tintervenants(i.NUMINTERVENTION, j.NUMEMPLOYE, j.DATEDEBUT, j.DATEFIN, j.INTERVENANT_EMPLOYES, i.INTERVENTION_INTERVENANTS)
- FROM Employes e, TABLE(e.EMPLOYE_INTERVENANTS) j, Interventions i
- WHERE j.NUMINTERVENTION = i.NUMINTERVENTION
-   AND i.NUMINTERVENTION = 1);
+INSERT INTO TABLE (SELECT i.INTERVENTION_INTERVENANTS FROM Interventions i WHERE i.NUMINTERVENTION = 1) (SELECT ref(i) from Intervenants i where i.NUMINTERVENTION = 1);
 
 INSERT INTO TABLE (SELECT i.INTERVENTION_INTERVENANTS
                    FROM Interventions i
