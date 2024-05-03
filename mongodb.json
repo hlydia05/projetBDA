@@ -38,3 +38,83 @@ cas.
 
 
 - Illustrez votre modélisation par un exemple (ou plus) de la BD fournie
+- exemple 1: 
+{
+  "numVehicule": 1,
+  "immatriculation": "0012519216",
+  "annee": 1992,
+  "marque": {
+    "numMarque": 17,
+    "marque": "RENAULT",
+    "pays": "FRANCE"
+  },
+  "interventions": [
+    {
+      "numIntervention": 7,
+      "typeIntervention": "Entretien",
+      "dateDebut": "2006-04-09 09:00:00",
+      "dateFin": "2006-04-09 18:00:00",
+      "cout": 8000,
+      "employes": [
+        {
+          "numEmploye": 55,
+          "nomEmploye": "HADJ",
+          "prenomEmploye": "Zouhir",
+          "categorieEmploye": "Assistant",
+          "salaireEmploye": 12000
+        },
+        {
+          "numEmploye": 65,
+          "nomEmploye": "MOHAMMEDI",
+          "prenomEmploye": "Mustapha",
+          "categorieEmploye": "Mécanicien",
+          "salaireEmploye": 24000
+        }
+      ]
+    }
+  ]
+}
+
+- exemple 2: 
+{
+  "numVehicule": 28,
+  "immatriculation": "1986219904",
+  "annee": 1999,
+  "marque": {
+    "numMarque": 2,
+    "marque": "AUDI",
+    "pays": "ALLEMAGNE"
+  },
+  "interventions": [
+    {
+      "numIntervention": 11,
+      "typeIntervention": "Réparation",
+      "dateDebut": "2006-03-08 14:00:00",
+      "dateFin": "2006-03-17 12:00:00",
+      "cout": 36000,
+      "employes": [
+        {
+          "numEmploye": 59,
+          "nomEmploye": "BELHAMIDI",
+          "prenomEmploye": "Mourad",
+          "categorieEmploye": "Mécanicien",
+          "salaireEmploye": 19500
+        },
+        {
+          "numEmploye": 64,
+          "nomEmploye": "BADI",
+          "prenomEmploye": "Hatem",
+          "categorieEmploye": "Assistant",
+          "salaireEmploye": 14000
+        },
+        {
+          "numEmploye": 53,
+          "nomEmploye": "LACHEMI",
+          "prenomEmploye": "Bouzid",
+          "categorieEmploye": "Mécanicien",
+          "salaireEmploye": 25000
+        }
+      ]
+    }
+  ]
+}
