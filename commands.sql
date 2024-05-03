@@ -188,29 +188,32 @@ create or replace type body Tmarque as
 /* 7. Définir les tables nécessaires à la base de données.*/
 -- Création de la table pour le type Tmarque
 CREATE TABLE Marques OF Tmarque (
-   constraint pk_marques primary key(nom)
+   constraint pk_marques primary key(NUMMARQUE)
 ) NESTED TABLE MARQUE_MODELES STORE AS marque_modeles_table;
 
 -- Création de la table pour le type Tmodele  
 CREATE TABLE Modeles OF Tmodele (
-   constraint pk_modeles primary key(nom)
+   constraint pk_modeles primary key(NUMMODELE)
 ) NESTED TABLE MODELE_VEHICULES STORE AS modele_vehicules_table;
 
 -- Création de la table pour le type Tclient
 CREATE TABLE Clients OF Tclient (
-    constraint pk_clients primary key(nom)
+    constraint pk_clients primary key(NUMCLIENT)
 ) NESTED TABLE CLIENT_VEHICULES STORE AS client_vehicules_table;
 
 -- Création de la table pour le type Tvehicule
 CREATE TABLE Vehicules OF Tvehicule (
-    constraint pk_vehicules primary key(nom)
+    constraint pk_vehicules primary key(NUMVEHICULE)
 ) NESTED TABLE VEHICULE_INTERVENTIONS STORE AS vehicule_interventions_table;
 
 -- Création de la table pour le type Temploye
 CREATE TABLE Employes OF Temploye (
-    constraint pk_employes primary key(nom)
-) NESTED TABLE EMPLOYE_INTERVENANTS STORE AS employe_intervenants_table;
+   CONSTRAINT pk_employes PRIMARY KEY (NUMEMPLOYE)
+)
+NESTED TABLE EMPLOYE_INTERVENANTS STORE AS employe_intervenants_table,
 NESTED TABLE EMPLOYE_INTERVENTIONS STORE AS employe_interventions_table;
+
+
 
 -- Création de la table pour le type Tinterventions  
 CREATE TABLE Interventions OF Tinterventions (
