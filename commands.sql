@@ -119,17 +119,14 @@ MARQUE_MODELES tset_modeles
 
 /*calculer pour chaque employe, le nombre d'interventions effectuées*/
 alter type Temploye add member function nb_interventions return numeric cascade;
-create or replace type body Temploye as
-  member function nb_interventions return numeric is
+CREATE OR REPLACE TYPE BODY Temploye AS
+  MEMBER FUNCTION nb_interventions RETURN NUMBER IS
+    total_interventions NUMBER := 0;
   BEGIN
-    select count(cast(multiset(
-        select i.INTERVENTION_INTERVENANTS
-        from table(self.EMPLOYE_INTERVENTIONS) i, table(i.INTERVENTION_INTERVENANTS) j
-        where j.NUMEMPLOYE = self.NUMEMPLOYE
-        ) as Tset_intervenants))
-        into nb from dual;
-    RETURN nb;
-  END nb_interventions;
+    SELECT COUNT(*) INTO total_interventions
+    FROM TABLE(CAST(self.EMPLOYE_INTERVENTIONS AS Tset_intervenants));
+    RETURN total_interventions;
+  END;
 END;
 /
 
