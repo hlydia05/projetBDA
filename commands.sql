@@ -330,8 +330,8 @@ INSERT INTO Modeles VALUES (Tmodele(28, (SELECT REF(m) FROM Marques m WHERE m.NU
 INSERT INTO Modeles VALUES (Tmodele(29, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 45), 'POLO', tset_vehicule()));
 
 --tables vehicules
-INSERT INTO Vehicules VALUES(1,(SELECT REF(c) FROM Clients c WHERE c.NUMCLIENT = 2),(SELECT REF(m) FROM Modeles m WHERE m.NUMMODELE = 6),0012519216,1992,tset_interventions());
-INSERT INTO Vehicules VALUES(2,(SELECT REF(c) FROM Clients c WHERE c.NUMCLIENT = 9),(SELECT REF(m) FROM Modeles m WHERE m.NUMMODELE = 20),0124219316,1993,tset_interventions());
+INSERT INTO Vehicules VALUES(1,(SELECT REF(c) FROM Clients c WHERE c.NUMCLIENT = 2),(SELECT REF(m) FROM Modeles m WHERE m.NUMMODELE = 6),"0012519216",1992,tset_interventions());
+INSERT INTO Vehicules VALUES(2,(SELECT REF(c) FROM Clients c WHERE c.NUMCLIENT = 9),(SELECT REF(m) FROM Modeles m WHERE m.NUMMODELE = 20),"0124219316",1993,tset_interventions());
 INSERT INTO Vehicules VALUES(3,(SELECT REF(c) FROM Clients c WHERE c.NUMCLIENT = 17),(SELECT REF(m) FROM Modeles m WHERE m.NUMMODELE = 8),1452318716,1987,tset_interventions());
 INSERT INTO Vehicules VALUES(4,(SELECT REF(c) FROM Clients c WHERE c.NUMCLIENT = 6),(SELECT REF(m) FROM Modeles m WHERE m.NUMMODELE = 12),3145219816,1998,tset_interventions());
 INSERT INTO Vehicules VALUES(5,(SELECT REF(c) FROM Clients c WHERE c.NUMCLIENT = 16),(SELECT REF(m) FROM Modeles m WHERE m.NUMMODELE = 23),1278919816,1998,tset_interventions());
