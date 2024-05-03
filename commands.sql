@@ -271,6 +271,63 @@ INSERT INTO Employes VALUES(71,'TERKI','Yacine','Mécanicien',23000, tset_interv
 INSERT INTO Employes VALUES(72,'TEBIBEL','Ahmed','Assistant',17000, tset_intervenants(), tset_interventions());
 INSERT INTO Employes VALUES(80,'LARDJOUNE','Karim','',25000, tset_intervenants(), tset_interventions());
 
+--table marques 
+-- Insertions pour la table Marques
+INSERT INTO Marques VALUES (Tmarque(1, 'LAMBORGHINI', 'ITALIE', tset_modeles()));
+INSERT INTO Marques VALUES ( Tmarque(2, 'AUDI', 'ALLEMAGNE', tset_modeles()));
+INSERT INTO Marques VALUES (Tmarque(3, 'ROLLS-ROYCE', 'GRANDE-BRETAGNE', tset_modeles()));
+INSERT INTO Marques VALUES ( Tmarque(4, 'BMW', 'ALLEMAGNE', tset_modeles()));
+INSERT INTO Marques VALUES ( Tmarque(5, 'CADILLAC', 'ETATS-UNIS', tset_modeles()));
+INSERT INTO Marques VALUES (Tmarque(6, 'CHRYSLER', 'ETATS-UNIS', tset_modeles()));
+INSERT INTO Marques VALUES (Tmarque(7, 'FERRARI', 'ITALIE', tset_modeles()));
+INSERT INTO Marques VALUES (Tmarque(8, 'HONDA', 'JAPON', tset_modeles()));
+INSERT INTO Marques VALUES (Tmarque(9, 'JAGUAR', 'GRANDE-BRETAGNE', tset_modeles()));
+INSERT INTO Marques VALUES (Tmarque(10, 'ALFA-ROMEO', 'ITALIE', tset_modeles()));
+INSERT INTO Marques VALUES ( Tmarque(11, 'LEXUS', 'JAPON', tset_modeles()));
+INSERT INTO Marques VALUES (Tmarque(12, 'LOTUS', 'GRANDE-BRETAGNE', tset_modeles()));
+INSERT INTO Marques VALUES ( Tmarque(13, 'MASERATI', 'ITALIE', tset_modeles()));
+INSERT INTO Marques VALUES (Tmarque(14, 'MERCEDES', 'ALLEMAGNE', tset_modeles()));
+INSERT INTO Marques VALUES (Tmarque(15, 'PEUGEOT', 'FRANCE', tset_modeles()));
+INSERT INTO Marques VALUES ( Tmarque(16, 'PORSCHE', 'ALLEMAGNE', tset_modeles()));
+INSERT INTO Marques VALUES ( Tmarque(17, 'RENAULT', 'FRANCE', tset_modeles()));
+INSERT INTO Marques VALUES (Tmarque(18, 'SAAB', 'SUEDE', tset_modeles()));
+INSERT INTO Marques VALUES (Tmarque(19, 'TOYOTA', 'JAPON', tset_modeles()));
+INSERT INTO Marques VALUES (Tmarque(20, 'VENTURI', 'FRANCE', tset_modeles()));
+INSERT INTO Marques VALUES (Tmarque(21, 'VOLVO', 'SUEDE', tset_modeles()));
+
+--tables modeles
+-- Insertions pour la table MODELE
+INSERT INTO Modeles VALUES ( Tmodele(2, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 1), 'Diablo', tset_vehicule()));
+INSERT INTO Modeles VALUES (Tmodele(3, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 2), 'Serie 5', tset_vehicule()));
+INSERT INTO Modeles VALUES (Tmodele(4, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 10), 'NSX', tset_vehicule()));
+INSERT INTO Modeles VALUES (Tmodele(5, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 14), 'Classe C', tset_vehicule()));
+INSERT INTO Modeles VALUES (Tmodele(6, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 17), 'Safrane', tset_vehicule()));
+INSERT INTO Modeles VALUES (Tmodele(7, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 20), '400 GT', tset_vehicule()));
+INSERT INTO Modeles VALUES (Tmodele(8, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 12), 'Esprit', tset_vehicule()));
+INSERT INTO Modeles VALUES (Tmodele(9, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 15), '605', tset_vehicule()));
+INSERT INTO Modeles VALUES (Tmodele(10, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 19), 'Previa', tset_vehicule()));
+INSERT INTO Modeles VALUES (Tmodele(11, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 7), '550 Maranello', tset_vehicule()));
+INSERT INTO Modeles VALUES (Tmodele(12, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 3), 'Bentley-Continental', tset_vehicule()));
+INSERT INTO Modeles VALUES (Tmodele(13, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 10), 'Spider', tset_vehicule()));
+INSERT INTO Modeles VALUES (Tmodele(14, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 13), 'Evoluzione', tset_vehicule()));
+INSERT INTO Modeles VALUES (Tmodele(15, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 16), 'Carrera', tset_vehicule()));
+INSERT INTO Modeles VALUES (Tmodele(16, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 16), 'Boxter', tset_vehicule()));
+INSERT INTO Modeles VALUES (Tmodele(17, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 21), 'S 80', tset_vehicule()));
+INSERT INTO Modeles VALUES (Tmodele(18, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 6), '300 M', tset_vehicule()));
+INSERT INTO Modeles VALUES (Tmodele(19, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 4), 'M 3', tset_vehicule()));
+INSERT INTO Modeles VALUES (Tmodele(20, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 9), 'XJ 8', tset_vehicule()));
+INSERT INTO Modeles VALUES (Tmodele(21, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 15), '406 Coupe', tset_vehicule()));
+INSERT INTO Modeles VALUES (Tmodele(22, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 20), '300 Atlantic', tset_vehicule()));
+INSERT INTO Modeles VALUES (Tmodele(23, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 14), 'Classe E', tset_vehicule()));
+INSERT INTO Modeles VALUES (Tmodele(24, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 11), 'GS 300', tset_vehicule()));
+INSERT INTO Modeles VALUES (Tmodele(25, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 5), 'Seville', tset_vehicule()));
+INSERT INTO Modeles VALUES ( Tmodele(26, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 18), '95 Cabriolet', tset_vehicule()));
+INSERT INTO Modeles VALUES (Tmodele(27, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 2), 'TT Coupé', tset_vehicule()));
+INSERT INTO Modeles VALUES (Tmodele(28, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 7), 'F 355', tset_vehicule()));
+INSERT INTO Modeles VALUES (Tmodele(29, (SELECT REF(m) FROM Tmarque m WHERE m.NUMMARQUE = 45), 'POLO', tset_vehicule()));
+
+
+
 --table interventions
 INSERT INTO Interventions  VALUES(1,(select ref(v) from VEHICULE v where v.NUMVEHICULE=3),'Réparation',TO_DATE('2006-02-25 09:00:00','RRRR-MM-DD HH24:MI:SS'),TO_DATE('2006-02-26 12:00:00','RRRR-MM-DD HH24:MI:SS'),30000, tset_intervenants(), tset_employes());
 INSERT INTO Interventions  VALUES(2,(select ref(v) from VEHICULE v where v.NUMVEHICULE=21),'Réparation',TO_DATE('2006-02-23 09:00:00','RRRR-MM-DD HH24:MI:SS'),TO_DATE('2006-02-24 18:00:00','RRRR-MM-DD HH24:MI:SS'),10000, tset_intervenants(), tset_employes());
