@@ -70,7 +70,7 @@ create type tset_interventions as table of Tinterventions;
 alter type Temploye add attribute EMPLOYE_INTERVENTIONS tset_interventions cascade;
 
 create or replace type Tvehicule as object(
-NUMVEHICULE numver,
+NUMVEHICULE number,
 NUMCLIENT ref Tclient,
 NUMMODELE ref Tmodele,
 NUMIMMAT VARCHAR2(20),
