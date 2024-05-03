@@ -110,7 +110,7 @@ create type tset_modeles as table of Tmodele;
 create or replace type Tmarque as object (
 NUMMARQUE number,
 MARQUE varchar2(20),
-PAYS  varcar2(20),
+PAYS  varchar2(20),
 MARQUE_MODELES tset_modeles
 );
 /
