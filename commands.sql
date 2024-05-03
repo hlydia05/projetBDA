@@ -36,7 +36,7 @@ DATEFIN DATE
 );
 /
 
-create type tset_intervenants as table of Tintervenants;
+create type tset_intervenants as table of ref Tintervenants;
 /
 
 create or replace type Temploye as object(
@@ -49,7 +49,7 @@ EMPLOYE_INTERVENANTS tset_intervenants
 );
 /
 
-create type tset_employes as table of Temploye;
+create type tset_employes as table of ref Temploye;
 /
 
 create or replace type Tinterventions as object(
@@ -64,7 +64,7 @@ INTERVENTION_EMPLOYES tset_employes
 );
 /
 
-create type tset_interventions as table of Tinterventions;
+create type tset_interventions as table of ref Tinterventions;
 /
 
 alter type Temploye add attribute EMPLOYE_INTERVENTIONS tset_interventions cascade;
@@ -79,7 +79,7 @@ VEHICULE_INTERVENTIONS tset_interventions
 );
 /
 
-create type tset_vehicules as table of Tvehicule;
+create type tset_vehicules as table of ref Tvehicule;
 /
 
 create or replace type Tclient as object(
@@ -104,7 +104,7 @@ MODELE_VEHICULES tset_vehicules
 );
 /
 
-create type tset_modeles as table of Tmodele;
+create type tset_modeles as table of ref Tmodele;
 /
 
 create or replace type Tmarque as object (
