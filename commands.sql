@@ -16,11 +16,17 @@ grant all privileges to sql3;
 /*5. En se basant sur le diagramme de classes fait, définir tous les types nécessaires. Prendre en compte toutes les associations qui existent.*/
 
 create type Tinterventions;
+/
 create type Temploye;
+/
 create type Tvehicule;
+/
 create type Tclient;
+/
 create type Tmodele;
+/
 create type Tmarque;
+/
 
 create or replace type Tintervenants as object (
 NUMINTERVENTION ref Tinterventions,
