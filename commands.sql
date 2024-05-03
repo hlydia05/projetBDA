@@ -49,7 +49,7 @@ EMPLOYE_INTERVENANTS tset_intervenants
 );
 /
 
-create type tset_employes as table of Temloye;
+create type tset_employes as table of Temploye;
 /
 
 create or replace type Tinterventions as object(
