@@ -134,34 +134,26 @@ END;
 /
 
 /*calculer pour chaque marque le nombre de modèles*/
-alter type Tmarque add member  function nb_modeles return numeric cascade;
-create or remplace type body Tmarque as
-  member function nb_modeles return numeric is
-    nb numeric;
-  BEGIN
-    select count(cast(multiset(
-      select m.MODELE from table(self.MARQUE_MODELES) m
-    ) as Tset_modeles))
-    into nb from dual;
-    return nb;
-  END nb_modeles;
- END;
- /
+ALTER TYPE Tmarque ADD MEMBER FUNCTION nb_modeles RETURN NUMBER CASCADE;
+
+CREATE OR REPLACE TYPE BODY Tmarque AS
+    MEMBER FUNCTION nb_modeles RETURN NUMBER IS
+    BEGIN
+        RETURN self.MARQUE_MODELES.COUNT;
+    END nb_modeles;
+END;
+/
+
  
  /*calculer pour chaque modele, le nombre de véhicules*/
- alter type Tmodele add member function nb_vehicules return numeric cascade;
- create or replace type body Tmodele as
-   member function nb_vehicules return numeric is
-     nb numeric;
-   BEGIN
-     select count(cast(multiset(
-       select * from table(self.MODELE_VEHICULES)
-     ) as Tset_vehicule))
-     into nb from dual;
-     return nb;
-   END nb_vehicules;
- END;
- /
+ALTER TYPE Tmodele ADD MEMBER FUNCTION nb_vehicules RETURN NUMBER CASCADE;
+CREATE OR REPLACE TYPE BODY Tmodele AS
+    MEMBER FUNCTION nb_vehicules RETURN NUMBER IS
+    BEGIN
+        RETURN self.MODELE_VEHICULES.COUNT;
+    END nb_vehicules;
+END;
+/
  
  /*lister pour chaque client, ses véhicules*/
  alter type Tclient add member function lister_vehicules return numeric cascade;
