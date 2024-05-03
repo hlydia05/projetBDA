@@ -131,7 +131,7 @@ END;
 /
 
 /*calculer pour chaque marque le nombre de modèles*/
-ALTER TYPE Tmarque ADD MEMBER FUNCTION nb_modeles RETURN NUMBER CASCADE;
+alter type Tmarque add member function nb_modeles return number cascade;
 
 CREATE OR REPLACE TYPE BODY Tmarque AS
     MEMBER FUNCTION nb_modeles RETURN NUMBER IS
@@ -143,7 +143,7 @@ END;
 
  
  /*calculer pour chaque modele, le nombre de véhicules*/
-ALTER TYPE Tmodele ADD MEMBER FUNCTION nb_vehicules RETURN NUMBER CASCADE;
+alter type Tmodele add member function nb_vehicules return number cascade;
 CREATE OR REPLACE TYPE BODY Tmodele AS
     MEMBER FUNCTION nb_vehicules RETURN NUMBER IS
     BEGIN
