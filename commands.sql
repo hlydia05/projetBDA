@@ -100,7 +100,7 @@ create or replace type Tmodele as object (
 NUMMODELE NUMBER,
 NUMMARQUE ref Tmarque,
 MODELE varchar2(20),
-MODELE_VEHICULES tset_vehicule
+MODELE_VEHICULES tset_vehicules
 );
 /
 
