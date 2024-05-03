@@ -37,6 +37,7 @@ DATEFIN DATE
 /
 
 create type tset_intervenants as table of Tintervenants;
+/
 
 create or replace type Temploye as object(
 NUMEMPLOYE number,
@@ -49,6 +50,7 @@ EMPLOYE_INTERVENANTS tset_intervenants
 /
 
 create type tset_employes as table of Temloye;
+/
 
 create or replace type Tinterventions as object(
 NUMINTERVENTION number,
@@ -63,6 +65,7 @@ INTERVENTION_EMPLOYES tset_employes
 /
 
 create type tset_interventions as table of Tinterventions;
+/
 
 alter type Temploye add attribute EMPLOYE_INTERVENTIONS tset_interventions cascade;
 
@@ -77,6 +80,7 @@ VEHICULE_INTERVENTIONS tset_interventions
 /
 
 create type tset_vehicules as table of Tvehicule;
+/
 
 create or replace type Tclient as object(
 NUMCLIENT number,
@@ -101,6 +105,7 @@ MODELE_VEHICULES tset_vehicule
 /
 
 create type tset_modeles as table of Tmodele;
+/
 
 create or replace type Tmarque as object (
 NUMMARQUE number,
