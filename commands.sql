@@ -118,7 +118,7 @@ MARQUE_MODELES tset_modeles
 /*6. Définir les méthodes permettant de :*/
 
 /*calculer pour chaque employe, le nombre d'interventions effectuées*/
-alter type Temploye add member function nb_interventions return numeric cascade;
+alter type Temploye add member function nb_interventions return number cascade;
 CREATE OR REPLACE TYPE BODY Temploye AS
   MEMBER FUNCTION nb_interventions RETURN NUMBER IS
     total_interventions NUMBER := 0;
