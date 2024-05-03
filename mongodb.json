@@ -160,3 +160,124 @@ exemple3:
 
 Justification du choix de conception :
 Cette modélisation orientée document est appropriée car elle permet de représenter naturellement les relations entre les différentes entités (véhicule, marque, interventions, employés). En imbriquant les données liées dans un même document, on évite les jointures coûteuses des bases de données relationnelles. De plus, cette structure est bien adaptée aux requêtes qui portent principalement sur les véhicules et leurs interventions.
+
+B - Remplir la collection :
+db.vehicules.insertMany([
+  {
+    "numVehicule" : 1,
+    "immatriculation" : "0012519216",
+    "annee" : 1992,
+    "marque" : {
+      "numMarque" : 17,
+      "marque" : "RENAULT",
+      "pays" : "FRANCE"
+    },
+    "interventions" : [
+      {
+        "numIntervention" : 7,
+        "typeIntervention" : "Entretien",
+        "dateDebut" : ISODate("2006-04-09T09:00:00Z"),
+        "dateFin" : ISODate("2006-04-09T18:00:00Z"),
+        "cout" : 8000,
+        "employes" : [
+          {
+            "numEmploye" : 55,
+            "nomEmploye" : "HADJ",
+            "prenomEmploye" : "Zouhir",
+            "categorieEmploye" : "Assistant",
+            "salaiereEmploye" : 12000
+          },
+          {
+            "numEmploye" : 65,
+            "nomEmploye" : "MOHAMMEDI",
+            "prenomEmploye" : "Mustapha",
+            "categorieEmploye" : "Mécanicien",
+            "salaiereEmploye" : 24000
+          }
+        ]
+      },
+      {
+        "numIntervention" : 14,
+        "typeIntervention" : "Réparation",
+        "dateDebut" : ISODate("2006-05-10T14:00:00Z"),
+        "dateFin" : ISODate("2006-05-12T12:00:00Z"),
+        "cout" : 39000,
+        "employes" : [
+          {
+            "numEmploye" : 88,
+            "nomEmploye" : "XXXXXX",
+            "prenomEmploye" : "XXXXXX",
+            "categorieEmploye" : "Mécanicien",
+            "salaiereEmploye" : 20000
+          }
+        ]
+      }
+    ]
+  },
+  // Ajouter d'autres documents ici...
+])
+
+C- Répondre aux requêtes suivantes :
+- Afficher tous les véhicules de la marque «PORSCHE»
+
+db.vehicules.find({"marque.marque": "PORSCHE"})
+
+- Récupérer dans une nouvelle collection Véhicules_Interventions, les matricules des véhicules et
+le nombre total de s interventions par véhicule ; la collection devra être ordonnée par ordre
+décroissant du nombre des interventions.
+
+db.vehicules.aggregate([
+  {$project: {immatriculation: 1, nbInterventions: {$size: "$interventions"}}},
+  {$sort: {nbInterventions: -1}},
+  {$out: "Véhicules_Interventions"}
+])
+
+- Dans une collection véhicule_bcp_pannes, récupérer les véhicules dont le nombre des
+interventions dépasse 6 pannes.
+
+db.vehicules.aggregate([
+  {$match: {$expr: {$gt: [{$size: "$interventions"}, 6]}}},
+  {$out: "véhicule_bcp_pannes"}
+])
+
+- Récupérer dans une collection employe-interv, toutes les interventions d’un employé.
+
+db.vehicules.aggregate([
+  {$unwind: "$interventions"},
+  {$unwind: "$interventions.employes"},
+  {$match: {"interventions.employes.numEmploye": 53}}, // Remplacer par le numéro d'employé souhaité
+  {$group: {_id: "$interventions.numIntervention", employes: {$push: "$interventions.employes"}}},
+  {$out: "employe-interv"}
+])
+
+- Augmenter de 8000DA, le salaire des employés de catégorie « Mécanicien»
+
+db.vehicules.updateMany(
+  {"interventions.employes.categorieEmploye": "Mécanicien"},
+  {$inc: {"interventions.employes.salaiereEmploye": 8000}}
+)
+
+- Reprendre la 4ième requête à l’aide du paradigme Map-Reduce.
+
+db.vehicules.mapReduce(
+  function() {
+    this.interventions.forEach(function(intervention) {
+      intervention.employes.forEach(function(employe) {
+        emit(employe.numEmploye, intervention.numIntervention);
+      });
+    });
+  },
+  function(numEmploye, interventions) {
+    return Array.from(new Set(interventions));
+  },
+  {
+    query: {"interventions.employes.numEmploye": 53}, // Remplacer par le numéro d'employé souhaité
+    out: "employe-interv"
+  }
+)
+
+D- Analyse
+Donnez votre analyse par rapport à ces requêtes
+Cette modélisation orientée document convient bien aux requêtes qui portent principalement sur les véhicules et leurs interventions, en évitant les jointures coûteuses. L'imbrication des données liées facilite l'écriture des requêtes et les rend plus performantes.
+Cependant, il faut être vigilant à la redondance des données, car les mêmes informations (employés, marque) sont répétées dans chaque document véhicule. Cela peut poser des problèmes lors des mises à jour.
+De plus, pour des requêtes portant principalement sur d'autres entités (employés, marques), cette modélisation serait moins optimale. Il faudrait alors envisager d'autres modèles de données plus adaptés.
