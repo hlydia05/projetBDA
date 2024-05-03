@@ -456,7 +456,7 @@ insert into table(select e.EMPLOYE_INTERVENANTS from Employes e where e.NUMEMPLO
 insert into table(select e.EMPLOYE_INTERVENANTS from Employes e where e.NUMEMPLOYE=80) (select ref(i) from Intervenants i where i.NUMEMPLOYE=(select ref(e) from Employes e where e.NUMEMPLOYE=80));
 
 /*EMPLOYE_INTERVENTIONS*/
-insert into table(select e.EMPLOYE_INTERVENTIONS from Employes e where e.NUMEMPLOYE=53) (select ref(i) from Interventions i, Intervenants itr where itr.NUMINTERVENTION=ref(i) AND deref(itr.NUMEMPLOYE)=53);
+insert into table(select e.EMPLOYE_INTERVENTIONS from Employes e where e.NUMEMPLOYE=53) (select ref(i) from Interventions i, Intervenants itr where itr.NUMINTERVENTION=ref(i) AND (select deref(it.NUMEMPLOYE) from Intervenants it)=53);
 insert into table(select e.EMPLOYE_INTERVENTIONS from Employes e where e.NUMEMPLOYE=54) (select ref(i) from Interventions i where i.NUMINTERVENTION=(select deref(itr.NUMINTERVENTION) from Intervenants itr where itr.NUMEMPLOYE=(select ref(e) from Employes e where e.NUMEMPLOYE=54)));
 insert into table(select e.EMPLOYE_INTERVENTIONS from Employes e where e.NUMEMPLOYE=55) (select ref(i) from Interventions i where i.NUMINTERVENTION=(select deref(itr.NUMINTERVENTION) from Intervenants itr where itr.NUMEMPLOYE=(select ref(e) from Employes e where e.NUMEMPLOYE=55)));
 insert into table(select e.EMPLOYE_INTERVENTIONS from Employes e where e.NUMEMPLOYE=56) (select ref(i) from Interventions i where i.NUMINTERVENTION=(select deref(itr.NUMINTERVENTION) from Intervenants itr where itr.NUMEMPLOYE=(select ref(e) from Employes e where e.NUMEMPLOYE=56)));
