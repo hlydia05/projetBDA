@@ -22,7 +22,7 @@ cas.
       "typeIntervention": "<type_intervention>",
       "dateDebut": "<date_debut_intervention>",
       "dateFin": "<date_fin_intervention>", 
-      "cout": <cout_intervention>,
+      "cout": "<cout_intervention>",
       "employes": [
         {
           "numEmploye": "<numero_employe>",
