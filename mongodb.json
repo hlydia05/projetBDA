@@ -1,0 +1,40 @@
+A- Modélisation orientée document
+On suppose que la plupart des requêtes sur la base vont porter sur les véhicules, leur marque et leurs
+interventions par les employés (voir exemples de requêtes plus bas). 
+- Proposer une modélisation orientée document de la base de données décrite dans la partie I, dans ce 
+cas.
+
+
+{
+  "numVehicule": "<numero_vehicule>",
+  "immatriculation": "<numero_immatriculation>",
+  "annee": "<annee_vehicule>",
+ 
+  "marque": {
+    "numMarque": "<numero_marque>",
+    "marque": "<nom_marque>",
+    "pays": "<pays_marque>"
+  },
+ 
+  "interventions": [
+    {
+      "numIntervention": "<numero_intervention>",
+      "typeIntervention": "<type_intervention>",
+      "dateDebut": "<date_debut_intervention>",
+      "dateFin": "<date_fin_intervention>", 
+      "cout": <cout_intervention>,
+      "employes": [
+        {
+          "numEmploye": "<numero_employe>",
+          "nomEmploye": "<nom_employe>",
+          "prenomEmploye": "<prenom_employe>",
+          "categorieEmploye": "<categorie_employe>",
+          "salaiereEmploye": "<salaire_employe>"
+        }
+      ]
+    }
+  ]
+}
+
+
+- Illustrez votre modélisation par un exemple (ou plus) de la BD fournie
