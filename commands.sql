@@ -217,7 +217,7 @@ NESTED TABLE EMPLOYE_INTERVENTIONS STORE AS employe_interventions_table;
 
 -- Création de la table pour le type Tinterventions  
 CREATE TABLE Interventions OF Tinterventions (
-    constraint pk_interventions primary key(nom)
+    constraint pk_interventions primary key(NUMINTERVENTION)
 ) NESTED TABLE INTERVENTION_INTERVENANTS STORE AS intervention_intervenants_table
   NESTED TABLE INTERVENTION_EMPLOYES STORE AS intervention_employes_table;
 
