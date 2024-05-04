@@ -219,6 +219,47 @@ db.vehicules.insertMany([
 
 C- Répondre aux requêtes suivantes :
 - Afficher tous les véhicules de la marque «PORSCHE»
+db.vehicules.insertMany([
+  {
+    "numVehicule" : 28,
+    "immatriculation" : "7896POR21",
+    "annee" : 2021, 
+    "marque" : {
+       "numMarque" : 16,
+       "marque" : "PORSCHE",
+       "pays" : "ALLEMAGNE"
+    },
+    "interventions" : [
+      {
+        "numIntervention" : 1001,
+        "typeIntervention" : "Entretien",
+        "dateDebut" : ISODate("2022-02-01T09:00:00Z"),
+        "dateFin" : ISODate("2022-02-01T17:00:00Z"),
+        "cout" : 12000,
+        "employes" : [
+          {
+            "numEmploye" : 53,
+            "nomEmploye" : "LACHEMI",
+            "prenomEmploye" : "Bouzid",
+            "categorieEmploye" : "Mécanicien",
+            "salaiereEmploye" : 25000
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "numVehicule" : 29,
+    "immatriculation" : "5673POR18",
+    "annee" : 2018,
+    "marque" : {
+       "numMarque" : 16,
+       "marque" : "PORSCHE",
+       "pays" : "ALLEMAGNE"
+    },
+    "interventions" : []
+  }
+])
 
 db.vehicules.find({"marque.marque": "PORSCHE"})
 
@@ -234,10 +275,281 @@ db.vehicules.aggregate([
 
 - Dans une collection véhicule_bcp_pannes, récupérer les véhicules dont le nombre des
 interventions dépasse 6 pannes.
-
+db.vehicules.insertMany([
+  {
+    "numVehicule": "12345",
+    "immatriculation": "ABC123",
+    "annee": 2018,
+    "marque": {
+      "numMarque": "1",
+      "marque": "Toyota",
+      "pays": "Japon"
+    },
+    "interventions": [
+      {
+        "numIntervention": "1",
+        "typeIntervention": "Révision",
+        "dateDebut": "2023-01-15",
+        "dateFin": "2023-01-16",
+        "cout": 200,
+        "employes": [
+          {
+            "numEmploye": "101",
+            "nomEmploye": "Dupont",
+            "prenomEmploye": "Jean",
+            "categorieEmploye": "Mécanicien",
+            "salaireEmploye": 3000
+          },
+          {
+            "numEmploye": "102",
+            "nomEmploye": "Martin",
+            "prenomEmploye": "Paul",
+            "categorieEmploye": "Assistant",
+            "salaireEmploye": 2500
+          }
+        ]
+      },
+      {
+        "numIntervention": "2",
+        "typeIntervention": "Réparation",
+        "dateDebut": "2023-03-10",
+        "dateFin": "2023-03-15",
+        "cout": 800,
+        "employes": [
+          {
+            "numEmploye": "103",
+            "nomEmploye": "Durand",
+            "prenomEmploye": "Jacques",
+            "categorieEmploye": "Mécanicien",
+            "salaireEmploye": 3200
+          },
+          {
+            "numEmploye": "104",
+            "nomEmploye": "Lefebvre",
+            "prenomEmploye": "Marie",
+            "categorieEmploye": "Assistant",
+            "salaireEmploye": 2800
+          }
+        ]
+      },
+      {
+        "numIntervention": "3",
+        "typeIntervention": "Entretien",
+        "dateDebut": "2023-05-20",
+        "dateFin": "2023-05-22",
+        "cout": 500,
+        "employes": [
+          {
+            "numEmploye": "105",
+            "nomEmploye": "Garcia",
+            "prenomEmploye": "Sophie",
+            "categorieEmploye": "Mécanicien",
+            "salaireEmploye": 3100
+          },
+          {
+            "numEmploye": "106",
+            "nomEmploye": "Robert",
+            "prenomEmploye": "Pierre",
+            "categorieEmploye": "Assistant",
+            "salaireEmploye": 2700
+          }
+        ]
+      },
+      {
+        "numIntervention": "4",
+        "typeIntervention": "Réparation",
+        "dateDebut": "2023-07-08",
+        "dateFin": "2023-07-12",
+        "cout": 1000,
+        "employes": [
+          {
+            "numEmploye": "107",
+            "nomEmploye": "Sanchez",
+            "prenomEmploye": "Luc",
+            "categorieEmploye": "Mécanicien",
+            "salaireEmploye": 3300
+          },
+          {
+            "numEmploye": "108",
+            "nomEmploye": "Morin",
+            "prenomEmploye": "Emilie",
+            "categorieEmploye": "Assistant",
+            "salaireEmploye": 2900
+          }
+        ]
+      },
+      {
+        "numIntervention": "5",
+        "typeIntervention": "Révision",
+        "dateDebut": "2023-09-15",
+        "dateFin": "2023-09-17",
+        "cout": 300,
+        "employes": [
+          {
+            "numEmploye": "109",
+            "nomEmploye": "Lopez",
+            "prenomEmploye": "Thomas",
+            "categorieEmploye": "Mécanicien",
+            "salaireEmploye": 3400
+          },
+          {
+            "numEmploye": "110",
+            "nomEmploye": "Leclerc",
+            "prenomEmploye": "Sophie",
+            "categorieEmploye": "Assistant",
+            "salaireEmploye": 2800
+          }
+        ]
+      },
+      {
+        "numIntervention": "6",
+        "typeIntervention": "Réparation",
+        "dateDebut": "2023-11-10",
+        "dateFin": "2023-11-18",
+        "cout": 1200,
+        "employes": [
+          {
+            "numEmploye": "111",
+            "nomEmploye": "Girard",
+            "prenomEmploye": "Antoine",
+            "categorieEmploye": "Mécanicien",
+            "salaireEmploye": 3500
+          },
+          {
+            "numEmploye": "112",
+            "nomEmploye": "Mercier",
+            "prenomEmploye": "Julie",
+            "categorieEmploye": "Assistant",
+            "salaireEmploye": 2900
+          }
+        ]
+      },
+      {
+        "numIntervention": "7",
+        "typeIntervention": "Entretien",
+        "dateDebut": "2024-01-20",
+        "dateFin": "2024-01-22",
+        "cout": 600,
+        "employes": [
+          {
+            "numEmploye": "113",
+            "nomEmploye": "Moreau",
+            "prenomEmploye": "Nicolas",
+            "categorieEmploye": "Mécanicien",
+            "salaireEmploye": 3200
+          },
+          {
+            "numEmploye": "114",
+            "nomEmploye": "Roux",
+            "prenomEmploye": "Céline",
+            "categorieEmploye": "Assistant",
+            "salaireEmploye": 2700
+          }
+        ]
+      },
+      {
+        "numIntervention": "8",
+        "typeIntervention": "Révision",
+        "dateDebut": "2024-03-12",
+        "dateFin": "2024-03-14",
+        "cout": 400,
+        "employes": [
+          {
+            "numEmploye": "115",
+            "nomEmploye": "Fournier",
+            "prenomEmploye": "Gabriel",
+            "categorieEmploye": "Mécanicien",
+            "salaireEmploye": 3300
+          },
+          {
+            "numEmploye": "116",
+            "nomEmploye": "Vincent",
+            "prenomEmploye": "Charlotte",
+            "categorieEmploye": "Assistant",
+            "salaireEmploye": 2800
+          }
+        ]
+      },
+      {
+        "numIntervention": "9",
+        "typeIntervention": "Réparation",
+        "dateDebut": "2024-05-18",
+        "dateFin": "2024-05-25",
+        "cout": 1000,
+        "employes": [
+          {
+            "numEmploye": "117",
+            "nomEmploye": "Petit",
+            "prenomEmploye": "Mathieu",
+            "categorieEmploye": "Mécanicien",
+            "salaireEmploye": 3400
+          },
+          {
+            "numEmploye": "118",
+            "nomEmploye": "Lemoine",
+            "prenomEmploye": "Sophie",
+            "categorieEmploye": "Assistant",
+            "salaireEmploye": 2900
+          }
+        ]
+      },
+      {
+        "numIntervention": "10",
+        "typeIntervention": "Entretien",
+        "dateDebut": "2024-07-15",
+        "dateFin": "2024-07-18",
+        "cout": 600,
+        "employes": [
+          {
+            "numEmploye": "119",
+            "nomEmploye": "Girard",
+            "prenomEmploye": "Antoine",
+            "categorieEmploye": "Mécanicien",
+            "salaireEmploye": 3500
+          },
+          {
+            "numEmploye": "120",
+            "nomEmploye": "Martin",
+            "prenomEmploye": "Julie",
+            "categorieEmploye": "Assistant",
+            "salaireEmploye": 2900
+          }
+        ]
+      },
+      {
+        "numIntervention": "11",
+        "typeIntervention": "Changement de pneus",
+        "dateDebut": "2024-09-05",
+        "dateFin": "2024-09-06",
+        "cout": 200,
+        "employes": [
+          {
+            "numEmploye": "121",
+            "nomEmploye": "Dupont",
+            "prenomEmploye": "Marie",
+            "categorieEmploye": "Mécanicien",
+            "salaireEmploye": 3600
+          },
+          {
+            "numEmploye": "122",
+            "nomEmploye": "Lefevre",
+            "prenomEmploye": "Thomas",
+            "categorieEmploye": "Assistant",
+            "salaireEmploye": 3000
+          }
+        ]
+      }
+    ]
+  }
+]);
 db.vehicules.aggregate([
-  {$match: {$expr: {$gt: [{$size: "$interventions"}, 6]}}},
-  {$out: "véhicule_bcp_pannes"}
+  {
+    $match: {
+      interventions: { $exists: true, $type: "array" }, 
+      $expr: { $gt: [{ $size: "$interventions" }, 6] } 
+    }
+  },
+  { $out: "véhicule_bcp_pannes" }
 ])
 
 - Récupérer dans une collection employe-interv, toutes les interventions d’un employé.
