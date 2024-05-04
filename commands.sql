@@ -123,9 +123,7 @@ CREATE OR REPLACE TYPE BODY Temploye AS
   MEMBER FUNCTION nb_interventions RETURN NUMBER IS
     total_interventions NUMBER := 0;
   BEGIN
-    SELECT COUNT(*) INTO total_interventions
-    FROM TABLE(CAST(self.EMPLOYE_INTERVENTIONS AS Tset_intervenants));
-    RETURN total_interventions;
+    RETURN self.EMPLOYE_INTERVENTIONS.COUNT;
   END;
 END;
 /
@@ -153,7 +151,7 @@ END;
 /
  
  /*lister pour chaque client, ses véhicules*/
- alter type Tclient add member function lister_vehicules return numeric cascade;
+ alter type Tclient add member procedure lister_vehicules cascade;
  create or replace type body Tclient as
    member produre lister_vehicules is
    BEGIN
@@ -161,17 +159,39 @@ END;
        select * from table(self.CLIENT_VEHICULES)
      )
      loop
-       DBMS_OUTPUT.PUT_LINE(v);
+       DBMS_OUTPUT.PUT_LINE(select deref(v.NUMVEHICULE) from v);
      end loop;
    END lister_vehicules;
  END;
  /
+
+create or replace type body Tclient as
+  member procedure lister_vehicules is
+    vehicule Tvehicule;
+  BEGIN
+    for ref_vehicule in (select deref(v) from table(self.CLIENT_VEHICULES) v) LOOP
+      vehicule := (select v2.NUMVEHICULE from Vehicules v2 where ref(v2)=ref_vehicule);
+      DBMS_OUTPUT.PUT_LINE(vehicule);
+    END LOOP;
+  END lister_vehicules;
+END;
+/
+create or replace type body Tclient as
+  member procedure lister_vehicules is
+  BEGIN
+    for v in (select deref(c) as vehicle
+              from table(self.CLIENT_VEHICULES) c) LOOP
+      DBMS_OUTPUT.PUT_LINE(v.NUMVEHICULE);
+    END LOOP;
+  END lister_vehicules;
+END;
+/
  
 /*calculer pour chaque marque, son chiffre d'affaire*/
-alter type Tmarque add member function chiffre_affaire return numeric cascade;
+alter type Tmarque add member function chiffre_affaire return number cascade;
 create or replace type body Tmarque as
-  member function chiffre_affaire return numeric is
-    ca numeric;
+  member function chiffre_affaire return number is
+    ca number;
   BEGIN
     select sum(i.COUNTINTERV) into ca
     from table(select cast(multiset(
@@ -222,11 +242,10 @@ CREATE TABLE Interventions OF Tinterventions (
   NESTED TABLE INTERVENTION_EMPLOYES STORE AS intervention_employes_table;
 
 -- Création de la table pour le type Tintervenants 
-CREATE TABLE Intervenants OF Tintervenants (
-    constraint pk_intervenant primary key(nom)
-) 
+CREATE TABLE Intervenants OF Tintervenants ;
 
 /*LES INSERTIONS*/
+alter session set nls_date_format = 'DD/MM/RRRR HH24:MI:SS';
 --table Clients
 INSERT INTO Clients VALUES (1,'Mme','Cherifa','MAHBOUBA','08/08/1957','CITE 1013 LOGTS BT 61 Alger','0561381813','0562458714','', tset_vehicules());
 INSERT INTO Clients VALUES (2,'Mme','Lamia','TAHMI','31/12/1955','CITE BACHEDJARAH BATIMENT 38 -Bach Djerrah-Alger','0562467849','0561392487','', tset_vehicules());
@@ -300,34 +319,34 @@ INSERT INTO Marques VALUES (Tmarque(21, 'VOLVO', 'SUEDE', tset_modeles()));
 
 --tables modeles
 -- Insertions pour la table MODELE
-INSERT INTO Modeles VALUES ( Tmodele(2, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 1), 'Diablo', tset_vehicule()));
-INSERT INTO Modeles VALUES (Tmodele(3, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 2), 'Serie 5', tset_vehicule()));
-INSERT INTO Modeles VALUES (Tmodele(4, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 10), 'NSX', tset_vehicule()));
-INSERT INTO Modeles VALUES (Tmodele(5, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 14), 'Classe C', tset_vehicule()));
-INSERT INTO Modeles VALUES (Tmodele(6, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 17), 'Safrane', tset_vehicule()));
-INSERT INTO Modeles VALUES (Tmodele(7, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 20), '400 GT', tset_vehicule()));
-INSERT INTO Modeles VALUES (Tmodele(8, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 12), 'Esprit', tset_vehicule()));
-INSERT INTO Modeles VALUES (Tmodele(9, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 15), '605', tset_vehicule()));
-INSERT INTO Modeles VALUES (Tmodele(10, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 19), 'Previa', tset_vehicule()));
-INSERT INTO Modeles VALUES (Tmodele(11, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 7), '550 Maranello', tset_vehicule()));
-INSERT INTO Modeles VALUES (Tmodele(12, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 3), 'Bentley-Continental', tset_vehicule()));
-INSERT INTO Modeles VALUES (Tmodele(13, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 10), 'Spider', tset_vehicule()));
-INSERT INTO Modeles VALUES (Tmodele(14, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 13), 'Evoluzione', tset_vehicule()));
-INSERT INTO Modeles VALUES (Tmodele(15, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 16), 'Carrera', tset_vehicule()));
-INSERT INTO Modeles VALUES (Tmodele(16, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 16), 'Boxter', tset_vehicule()));
-INSERT INTO Modeles VALUES (Tmodele(17, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 21), 'S 80', tset_vehicule()));
-INSERT INTO Modeles VALUES (Tmodele(18, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 6), '300 M', tset_vehicule()));
-INSERT INTO Modeles VALUES (Tmodele(19, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 4), 'M 3', tset_vehicule()));
-INSERT INTO Modeles VALUES (Tmodele(20, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 9), 'XJ 8', tset_vehicule()));
-INSERT INTO Modeles VALUES (Tmodele(21, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 15), '406 Coupe', tset_vehicule()));
-INSERT INTO Modeles VALUES (Tmodele(22, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 20), '300 Atlantic', tset_vehicule()));
-INSERT INTO Modeles VALUES (Tmodele(23, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 14), 'Classe E', tset_vehicule()));
-INSERT INTO Modeles VALUES (Tmodele(24, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 11), 'GS 300', tset_vehicule()));
-INSERT INTO Modeles VALUES (Tmodele(25, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 5), 'Seville', tset_vehicule()));
-INSERT INTO Modeles VALUES ( Tmodele(26, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 18), '95 Cabriolet', tset_vehicule()));
-INSERT INTO Modeles VALUES (Tmodele(27, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 2), 'TT Coupé', tset_vehicule()));
-INSERT INTO Modeles VALUES (Tmodele(28, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 7), 'F 355', tset_vehicule()));
-INSERT INTO Modeles VALUES (Tmodele(29, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 45), 'POLO', tset_vehicule()));
+INSERT INTO Modeles VALUES ( Tmodele(2, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 1), 'Diablo', tset_vehicules()));
+INSERT INTO Modeles VALUES (Tmodele(3, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 2), 'Serie 5', tset_vehicules()));
+INSERT INTO Modeles VALUES (Tmodele(4, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 10), 'NSX', tset_vehicules()));
+INSERT INTO Modeles VALUES (Tmodele(5, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 14), 'Classe C', tset_vehicules()));
+INSERT INTO Modeles VALUES (Tmodele(6, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 17), 'Safrane', tset_vehicules()));
+INSERT INTO Modeles VALUES (Tmodele(7, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 20), '400 GT', tset_vehicules()));
+INSERT INTO Modeles VALUES (Tmodele(8, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 12), 'Esprit', tset_vehicules()));
+INSERT INTO Modeles VALUES (Tmodele(9, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 15), '605', tset_vehicules()));
+INSERT INTO Modeles VALUES (Tmodele(10, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 19), 'Previa', tset_vehicules()));
+INSERT INTO Modeles VALUES (Tmodele(11, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 7), '550 Maranello', tset_vehicules()));
+INSERT INTO Modeles VALUES (Tmodele(12, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 3), 'Bentley-Continental', tset_vehicules()));
+INSERT INTO Modeles VALUES (Tmodele(13, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 10), 'Spider', tset_vehicules()));
+INSERT INTO Modeles VALUES (Tmodele(14, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 13), 'Evoluzione', tset_vehicules()));
+INSERT INTO Modeles VALUES (Tmodele(15, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 16), 'Carrera', tset_vehicules()));
+INSERT INTO Modeles VALUES (Tmodele(16, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 16), 'Boxter', tset_vehicules()));
+INSERT INTO Modeles VALUES (Tmodele(17, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 21), 'S 80', tset_vehicules()));
+INSERT INTO Modeles VALUES (Tmodele(18, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 6), '300 M', tset_vehicules()));
+INSERT INTO Modeles VALUES (Tmodele(19, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 4), 'M 3', tset_vehicules()));
+INSERT INTO Modeles VALUES (Tmodele(20, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 9), 'XJ 8', tset_vehicules()));
+INSERT INTO Modeles VALUES (Tmodele(21, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 15), '406 Coupe', tset_vehicules()));
+INSERT INTO Modeles VALUES (Tmodele(22, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 20), '300 Atlantic', tset_vehicules()));
+INSERT INTO Modeles VALUES (Tmodele(23, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 14), 'Classe E', tset_vehicules()));
+INSERT INTO Modeles VALUES (Tmodele(24, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 11), 'GS 300', tset_vehicules()));
+INSERT INTO Modeles VALUES (Tmodele(25, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 5), 'Seville', tset_vehicules()));
+INSERT INTO Modeles VALUES ( Tmodele(26, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 18), '95 Cabriolet', tset_vehicules()));
+INSERT INTO Modeles VALUES (Tmodele(27, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 2), 'TT Coupé', tset_vehicules()));
+INSERT INTO Modeles VALUES (Tmodele(28, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 7), 'F 355', tset_vehicules()));
+INSERT INTO Modeles VALUES (Tmodele(29, (SELECT REF(m) FROM Marques m WHERE m.NUMMARQUE = 45), 'POLO', tset_vehicules()));
 
 --tables vehicules
 INSERT INTO Vehicules VALUES(1,(SELECT REF(c) FROM Clients c WHERE c.NUMCLIENT = 2),(SELECT REF(m) FROM Modeles m WHERE m.NUMMODELE = 6),'0012519216',1992,tset_interventions());
@@ -456,46 +475,45 @@ insert into table(select e.EMPLOYE_INTERVENANTS from Employes e where e.NUMEMPLO
 insert into table(select e.EMPLOYE_INTERVENANTS from Employes e where e.NUMEMPLOYE=80) (select ref(i) from Intervenants i where i.NUMEMPLOYE=(select ref(e) from Employes e where e.NUMEMPLOYE=80));
 
 /*EMPLOYE_INTERVENTIONS*/
-INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 53) SELECT REF(i) FROM Interventions i INNER JOIN Intervenants itr ON itr.NUMINTERVENTION = REF(i) WHERE itr.NUMEMPLOYE = (SELECT REF(e) FROM Employes e WHERE e.NUMEMPLOYE = 53);
-INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 54) SELECT REF(i) FROM Interventions i INNER JOIN Intervenants itr ON itr.NUMINTERVENTION = REF(i) WHERE itr.NUMEMPLOYE = (SELECT REF(e) FROM Employes e WHERE e.NUMEMPLOYE = 54);
-INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 55) SELECT REF(i) FROM Interventions i INNER JOIN Intervenants itr ON itr.NUMINTERVENTION = REF(i) WHERE itr.NUMEMPLOYE = (SELECT REF(e) FROM Employes e WHERE e.NUMEMPLOYE = 55);
-INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 56) SELECT REF(i) FROM Interventions i INNER JOIN Intervenants itr ON itr.NUMINTERVENTION = REF(i) WHERE itr.NUMEMPLOYE = (SELECT REF(e) FROM Employes e WHERE e.NUMEMPLOYE = 56);
-INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 57) SELECT REF(i) FROM Interventions i INNER JOIN Intervenants itr ON itr.NUMINTERVENTION = REF(i) WHERE itr.NUMEMPLOYE = (SELECT REF(e) FROM Employes e WHERE e.NUMEMPLOYE = 57);
-INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 58) SELECT REF(i) FROM Interventions i INNER JOIN Intervenants itr ON itr.NUMINTERVENTION = REF(i) WHERE itr.NUMEMPLOYE = (SELECT REF(e) FROM Employes e WHERE e.NUMEMPLOYE = 58);
-INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 59) SELECT REF(i) FROM Interventions i INNER JOIN Intervenants itr ON itr.NUMINTERVENTION = REF(i) WHERE itr.NUMEMPLOYE = (SELECT REF(e) FROM Employes e WHERE e.NUMEMPLOYE = 59);
-INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 60) SELECT REF(i) FROM Interventions i INNER JOIN Intervenants itr ON itr.NUMINTERVENTION = REF(i) WHERE itr.NUMEMPLOYE = (SELECT REF(e) FROM Employes e WHERE e.NUMEMPLOYE = 60);
-INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 61) SELECT REF(i) FROM Interventions i INNER JOIN Intervenants itr ON itr.NUMINTERVENTION = REF(i) WHERE itr.NUMEMPLOYE = (SELECT REF(e) FROM Employes e WHERE e.NUMEMPLOYE = 61);
-INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 62) SELECT REF(i) FROM Interventions i INNER JOIN Intervenants itr ON itr.NUMINTERVENTION = REF(i) WHERE itr.NUMEMPLOYE = (SELECT REF(e) FROM Employes e WHERE e.NUMEMPLOYE = 62);
-INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 63) SELECT REF(i) FROM Interventions i INNER JOIN Intervenants itr ON itr.NUMINTERVENTION = REF(i) WHERE itr.NUMEMPLOYE = (SELECT REF(e) FROM Employes e WHERE e.NUMEMPLOYE = 63);
-INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 64) SELECT REF(i) FROM Interventions i INNER JOIN Intervenants itr ON itr.NUMINTERVENTION = REF(i) WHERE itr.NUMEMPLOYE = (SELECT REF(e) FROM Employes e WHERE e.NUMEMPLOYE = 64);
-INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 65) SELECT REF(i) FROM Interventions i INNER JOIN Intervenants itr ON itr.NUMINTERVENTION = REF(i) WHERE itr.NUMEMPLOYE = (SELECT REF(e) FROM Employes e WHERE e.NUMEMPLOYE = 65);
-INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 66) SELECT REF(i) FROM Interventions i INNER JOIN Intervenants itr ON itr.NUMINTERVENTION = REF(i) WHERE itr.NUMEMPLOYE = (SELECT REF(e) FROM Employes e WHERE e.NUMEMPLOYE = 66);
-INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 67) SELECT REF(i) FROM Interventions i INNER JOIN Intervenants itr ON itr.NUMINTERVENTION = REF(i) WHERE itr.NUMEMPLOYE = (SELECT REF(e) FROM Employes e WHERE e.NUMEMPLOYE = 67);
-INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 68) SELECT REF(i) FROM Interventions i INNER JOIN Intervenants itr ON itr.NUMINTERVENTION = REF(i) WHERE itr.NUMEMPLOYE = (SELECT REF(e) FROM Employes e WHERE e.NUMEMPLOYE = 68);
-INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 69) SELECT REF(i) FROM Interventions i INNER JOIN Intervenants itr ON itr.NUMINTERVENTION = REF(i) WHERE itr.NUMEMPLOYE = (SELECT REF(e) FROM Employes e WHERE e.NUMEMPLOYE = 69);
-INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 70) SELECT REF(i) FROM Interventions i INNER JOIN Intervenants itr ON itr.NUMINTERVENTION = REF(i) WHERE itr.NUMEMPLOYE = (SELECT REF(e) FROM Employes e WHERE e.NUMEMPLOYE = 70);
-INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 71) SELECT REF(i) FROM Interventions i INNER JOIN Intervenants itr ON itr.NUMINTERVENTION = REF(i) WHERE itr.NUMEMPLOYE = (SELECT REF(e) FROM Employes e WHERE e.NUMEMPLOYE = 71);
-INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 72) SELECT REF(i) FROM Interventions i INNER JOIN Intervenants itr ON itr.NUMINTERVENTION = REF(i) WHERE itr.NUMEMPLOYE = (SELECT REF(e) FROM Employes e WHERE e.NUMEMPLOYE = 72);
-INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 80) SELECT REF(i) FROM Interventions i INNER JOIN Intervenants itr ON itr.NUMINTERVENTION = REF(i) WHERE itr.NUMEMPLOYE = (SELECT REF(e) FROM Employes e WHERE e.NUMEMPLOYE = 80);
+INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 53) (select itr.NUMINTERVENTION from Intervenants itr where itr.NUMEMPLOYE=(select ref(e) from Employes e where e.NUMEMPLOYE=53));
+INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 54) (select itr.NUMINTERVENTION from Intervenants itr where itr.NUMEMPLOYE=(select ref(e) from Employes e where e.NUMEMPLOYE=54));
+INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 55) (select itr.NUMINTERVENTION from Intervenants itr where itr.NUMEMPLOYE=(select ref(e) from Employes e where e.NUMEMPLOYE=55));
+INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 56) (select itr.NUMINTERVENTION from Intervenants itr where itr.NUMEMPLOYE=(select ref(e) from Employes e where e.NUMEMPLOYE=56));
+INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 57) (select itr.NUMINTERVENTION from Intervenants itr where itr.NUMEMPLOYE=(select ref(e) from Employes e where e.NUMEMPLOYE=57));
+INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 58) (select itr.NUMINTERVENTION from Intervenants itr where itr.NUMEMPLOYE=(select ref(e) from Employes e where e.NUMEMPLOYE=58));
+INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 59) (select itr.NUMINTERVENTION from Intervenants itr where itr.NUMEMPLOYE=(select ref(e) from Employes e where e.NUMEMPLOYE=59));
+INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 60) (select itr.NUMINTERVENTION from Intervenants itr where itr.NUMEMPLOYE=(select ref(e) from Employes e where e.NUMEMPLOYE=60));
+INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 61) (select itr.NUMINTERVENTION from Intervenants itr where itr.NUMEMPLOYE=(select ref(e) from Employes e where e.NUMEMPLOYE=61));
+INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 62) (select itr.NUMINTERVENTION from Intervenants itr where itr.NUMEMPLOYE=(select ref(e) from Employes e where e.NUMEMPLOYE=62));
+INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 63) (select itr.NUMINTERVENTION from Intervenants itr where itr.NUMEMPLOYE=(select ref(e) from Employes e where e.NUMEMPLOYE=63));
+INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 64) (select itr.NUMINTERVENTION from Intervenants itr where itr.NUMEMPLOYE=(select ref(e) from Employes e where e.NUMEMPLOYE=64));
+INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 65) (select itr.NUMINTERVENTION from Intervenants itr where itr.NUMEMPLOYE=(select ref(e) from Employes e where e.NUMEMPLOYE=65));
+INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 66) (select itr.NUMINTERVENTION from Intervenants itr where itr.NUMEMPLOYE=(select ref(e) from Employes e where e.NUMEMPLOYE=66));
+INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 67) (select itr.NUMINTERVENTION from Intervenants itr where itr.NUMEMPLOYE=(select ref(e) from Employes e where e.NUMEMPLOYE=67));
+INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 68) (select itr.NUMINTERVENTION from Intervenants itr where itr.NUMEMPLOYE=(select ref(e) from Employes e where e.NUMEMPLOYE=68));
+INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 69) (select itr.NUMINTERVENTION from Intervenants itr where itr.NUMEMPLOYE=(select ref(e) from Employes e where e.NUMEMPLOYE=69));
+INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 71) (select itr.NUMINTERVENTION from Intervenants itr where itr.NUMEMPLOYE=(select ref(e) from Employes e where e.NUMEMPLOYE=71));
+INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 72) (select itr.NUMINTERVENTION from Intervenants itr where itr.NUMEMPLOYE=(select ref(e) from Employes e where e.NUMEMPLOYE=72));
+INSERT INTO TABLE(SELECT e.EMPLOYE_INTERVENTIONS FROM Employes e WHERE e.NUMEMPLOYE = 80) (select itr.NUMINTERVENTION from Intervenants itr where itr.NUMEMPLOYE=(select ref(e) from Employes e where e.NUMEMPLOYE=80));
 
 
 /*INTERVENTION_EMPLOYES*/
-insert into table(select e.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=1) (select ref(e) from Employes e where e.NUMEMPLOYE=(select deref(itr.NUMEMPLOYE) from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=1)));
-insert into table(select e.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=2) (select ref(e) from Employes e where e.NUMEMPLOYE=(select deref(itr.NUMEMPLOYE) from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=2)));
-insert into table(select e.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=3) (select ref(e) from Employes e where e.NUMEMPLOYE=(select deref(itr.NUMEMPLOYE) from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=3)));
-insert into table(select e.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=4) (select ref(e) from Employes e where e.NUMEMPLOYE=(select deref(itr.NUMEMPLOYE) from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=4)));
-insert into table(select e.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=5) (select ref(e) from Employes e where e.NUMEMPLOYE=(select deref(itr.NUMEMPLOYE) from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=5)));
-insert into table(select e.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=6) (select ref(e) from Employes e where e.NUMEMPLOYE=(select deref(itr.NUMEMPLOYE) from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=6)));
-insert into table(select e.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=7) (select ref(e) from Employes e where e.NUMEMPLOYE=(select deref(itr.NUMEMPLOYE) from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=7)));
-insert into table(select e.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=8) (select ref(e) from Employes e where e.NUMEMPLOYE=(select deref(itr.NUMEMPLOYE) from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=8)));
-insert into table(select e.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=9) (select ref(e) from Employes e where e.NUMEMPLOYE=(select deref(itr.NUMEMPLOYE) from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=9)));
-insert into table(select e.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=10) (select ref(e) from Employes e where e.NUMEMPLOYE=(select deref(itr.NUMEMPLOYE) from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=10)));
-insert into table(select e.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=11) (select ref(e) from Employes e where e.NUMEMPLOYE=(select deref(itr.NUMEMPLOYE) from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=11)));
-insert into table(select e.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=12) (select ref(e) from Employes e where e.NUMEMPLOYE=(select deref(itr.NUMEMPLOYE) from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=12)));
-insert into table(select e.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=13) (select ref(e) from Employes e where e.NUMEMPLOYE=(select deref(itr.NUMEMPLOYE) from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=13)));
-insert into table(select e.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=14) (select ref(e) from Employes e where e.NUMEMPLOYE=(select deref(itr.NUMEMPLOYE) from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=14)));
-insert into table(select e.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=15) (select ref(e) from Employes e where e.NUMEMPLOYE=(select deref(itr.NUMEMPLOYE) from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=15)));
-insert into table(select e.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=16) (select ref(e) from Employes e where e.NUMEMPLOYE=(select deref(itr.NUMEMPLOYE) from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=16)));
+insert into table(select i.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=1) (select itr.NUMEMPLOYE from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=1));
+insert into table(select i.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=2) (select itr.NUMEMPLOYE from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=2));
+insert into table(select i.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=3) (select itr.NUMEMPLOYE from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=3));
+insert into table(select i.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=4) (select itr.NUMEMPLOYE from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=4));
+insert into table(select i.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=5) (select itr.NUMEMPLOYE from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=5));
+insert into table(select i.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=6) (select itr.NUMEMPLOYE from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=6));
+insert into table(select i.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=7) (select itr.NUMEMPLOYE from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=7));
+insert into table(select i.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=8) (select itr.NUMEMPLOYE from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=8));
+insert into table(select i.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=9) (select itr.NUMEMPLOYE from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=9));
+insert into table(select i.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=10) (select itr.NUMEMPLOYE from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=10));
+insert into table(select i.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=11) (select itr.NUMEMPLOYE from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=11));
+insert into table(select i.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=12) (select itr.NUMEMPLOYE from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=12));
+insert into table(select i.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=13) (select itr.NUMEMPLOYE from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=13));
+insert into table(select i.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=14) (select itr.NUMEMPLOYE from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=14));
+insert into table(select i.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=15) (select itr.NUMEMPLOYE from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=15));
+insert into table(select i.INTERVENTION_EMPLOYES from Interventions i where i.NUMINTERVENTION=16) (select itr.NUMEMPLOYE from Intervenants itr where itr.NUMINTERVENTION=(select ref(i) from Interventions i where i.NUMINTERVENTION=16));
  /*INTERVENTION_INTERVENANTS*/
 INSERT INTO TABLE (SELECT i.INTERVENTION_INTERVENANTS FROM Interventions i WHERE i.NUMINTERVENTION = 1) (SELECT ref(i) from Intervenants i where i.NUMINTERVENTION = (select ref(itr) from Interventions itr where itr.NUMINTERVENTION=1));
 INSERT INTO TABLE (SELECT i.INTERVENTION_INTERVENANTS FROM Interventions i WHERE i.NUMINTERVENTION = 1) (SELECT ref(i) from Intervenants i where i.NUMINTERVENTION = (select ref(itr) from Interventions itr where itr.NUMINTERVENTION=2));
@@ -598,19 +616,10 @@ INSERT INTO TABLE (SELECT ma.MARQUE_MODELES FROM Marques ma WHERE ma.NUMMARQUE =
 /*E- Langage d’interrogation de données*/
 /*9. Lister les modèles et leur marque.*/
 /*SELECT m.MODELE, ma.MARQUE FROM Modeles m, Marques ma WHERE m.NUMMARQUE =  ma.NUMMARQUE;*/
-SELECT m.MODELE, (SELECT ma.MARQUE FROM Marques ma WHERE ma.NUMMARQUE = DEREF(m.NUMMARQUE)) FROM Modeles m;
-SELECT m.MODELE, DEREF(m.NUMMARQUE).MARQUE FROM Modeles m;
+SELECT m.MODELE, DEREF(m.NUMMARQUE).MARQUE as Marque FROM Modeles m;
 /*10. Lister les véhicules sur lesquels, il y a au moins une intervention.*/
 /*SELECT DISTINCT v.NUMVEHICULE FROM Vehicules v, TABLE(v.VEHICULE_INTERVENTIONS) i;*/
-SELECT DISTINCT DEREF(i.NUMVEHICULE) FROM TABLE(SELECT v.VEHICULE_INTERVENTIONS FROM Vehicules v) i WHERE i.NUMVEHICULE IS NOT NULL;
-SELECT DISTINCT DEREF(v.NUMVEHICULE) FROM Vehicules v WHERE EXISTS (SELECT 1 FROM TABLE(v.VEHICULE_INTERVENTIONS) WHERE 1=1);
-SELECT *
-FROM Vehicules v
-WHERE EXISTS (
-    SELECT 1
-    FROM Interventions i
-    WHERE v.NUMVEHICULE = DEREF(i.NUMVEHICULE).NUMVEHICULE
-);
+SELECT DISTINCT DEREF(i.NUMVEHICULE).NUMVEHICULE as NUMVEHICULE FROM Interventions i WHERE i.NUMVEHICULE IS NOT NULL;
 
 /*11. Quelle est la durée moyenne d’une intervention?*/
 /*SELECT AVG(DATEFININTERV - DATEDEBINTERV) AS duree_moyenne FROM Interventions;*/
@@ -620,7 +629,4 @@ SELECT AVG(DATEFININTERV - DATEDEBINTERV) AS duree_moyenne FROM Interventions;
 SELECT SUM(COUTINTERV) AS montant_global FROM Interventions WHERE COUTINTERV > 30000;
 /*13. Donner la liste des employés ayant fait le plus grand nombre d’interventions.*/
 /*SELECT e.NOMEMP, e.PRENOMEMP, e.nb_interventions() AS nb_interventions FROM Employes e WHERE e.nb_interventions() = (SELECT MAX(e2.nb_interventions()) FROM Employes e2);*/
-SELECT e.NOMEMP, e.PRENOMEMP, e.nb_interventions() AS nb_interventions FROM Employes e WHERE 
-	e.nb_interventions() = (SELECT MAX(e2.nb_interventions()) FROM Employes e2);
-SELECT DEREF(e.NUMEMPLOYE).NOMEMP, DEREF(e.NUMEMPLOYE).PRENOMEMP, e.nb_interventions() AS nb_interventions FROM Employes e WHERE 
-	e.nb_interventions() = (SELECT MAX(e2.nb_interventions()) FROM Employes e2);
+SELECT e.NOMEMP, e.PRENOMEMP, e.nb_interventions() AS nb_interventions FROM Employes e WHERE e.nb_interventions() = (SELECT MAX(e2.nb_interventions()) FROM Employes e2);
