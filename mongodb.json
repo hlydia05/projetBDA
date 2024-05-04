@@ -571,22 +571,24 @@ db.vehicules.updateMany(
 
 - Reprendre la 4ième requête à l’aide du paradigme Map-Reduce.
 
-db.vehicules.mapReduce(
-  function() {
-    this.interventions.forEach(function(intervention) {
-      intervention.employes.forEach(function(employe) {
-        emit(employe.numEmploye, intervention.numIntervention);
-      });
-    });
-  },
-  function(numEmploye, interventions) {
+var Map = function() {
+    if (this.interventions) {
+        this.interventions.forEach(function(intervention) {
+            intervention.employes.forEach(function(employe) {
+                emit(employe.numEmploye, intervention.numIntervention);
+            });
+        });
+    }
+};
+
+var Reduce = function(numEmploye, interventions) {
     return Array.from(new Set(interventions));
-  },
-  {
-    query: {"interventions.employes.numEmploye": 53}, // Remplacer par le numéro d'employé souhaité
+};
+
+db.vehicules.mapReduce(Map, Reduce, {
+    query: {"interventions.employes.numEmploye": 53}, 
     out: "employe-interv"
-  }
-)
+});
 
 D- Analyse
 Donnez votre analyse par rapport à ces requêtes
