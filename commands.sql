@@ -192,8 +192,10 @@ CREATE TABLE Modeles OF Tmodele (
 
 -- Création de la table pour le type Tclient
 CREATE TABLE Clients OF Tclient (
-    constraint pk_clients primary key(NUMCLIENT)
-) NESTED TABLE CLIENT_VEHICULES STORE AS client_vehicules_table;
+   CONSTRAINT pk_clients PRIMARY KEY (NUMCLIENT),
+   CONSTRAINT check_civ_client CHECK (CIV IN ('M', 'Mle', 'Mme'))
+)
+NESTED TABLE CLIENT_VEHICULES STORE AS client_vehicules_table;
 
 -- Création de la table pour le type Tvehicule
 CREATE TABLE Vehicules OF Tvehicule (
@@ -202,7 +204,8 @@ CREATE TABLE Vehicules OF Tvehicule (
 
 -- Création de la table pour le type Temploye
 CREATE TABLE Employes OF Temploye (
-   CONSTRAINT pk_employes PRIMARY KEY (NUMEMPLOYE)
+   CONSTRAINT pk_employes PRIMARY KEY (NUMEMPLOYE),
+   CONSTRAINT check_categorie_employe CHECK (CATEGORIE IN ('Mécanicien', 'Assistant'))
 )
 NESTED TABLE EMPLOYE_INTERVENANTS STORE AS employe_intervenants_table,
 NESTED TABLE EMPLOYE_INTERVENTIONS STORE AS employe_interventions_table;
