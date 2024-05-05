@@ -151,55 +151,29 @@ END;
 /
  
  /*lister pour chaque client, ses véhicules*/
- alter type Tclient add member procedure lister_vehicules cascade;
- create or replace type body Tclient as
-   member produre lister_vehicules is
-   BEGIN
-     for v in (
-       select * from table(self.CLIENT_VEHICULES)
-     )
-     loop
-       DBMS_OUTPUT.PUT_LINE(select deref(v.NUMVEHICULE) from v);
-     end loop;
-   END lister_vehicules;
- END;
- /
-
-create or replace type body Tclient as
-  member procedure lister_vehicules is
-    vehicule Tvehicule;
+create type tliste_vehicules as table of Tvehicule;
+ alter type Tclient add member function lister_vehicules return tliste_vehicules cascade;
+ CREATE OR REPLACE TYPE BODY Tclient AS
+  member function lister_vehicules return tliste_vehicules IS
+    liste_v tliste_vehicules;
   BEGIN
-    for ref_vehicule in (select deref(v) from table(self.CLIENT_VEHICULES) v) LOOP
-      vehicule := (select v2.NUMVEHICULE from Vehicules v2 where ref(v2)=ref_vehicule);
-      DBMS_OUTPUT.PUT_LINE(vehicule);
-    END LOOP;
+    Select CAST(MULTISET( select deref(value(v))
+                      from table(self.CLIENT_VEHICULES) v) as tliste_vehicules
+		   ) into liste_v from dual; 
+    return liste_v;
   END lister_vehicules;
 END;
 /
-create or replace type body Tclient as
-  member procedure lister_vehicules is
-  BEGIN
-    for v in (select deref(c) as vehicle
-              from table(self.CLIENT_VEHICULES) c) LOOP
-      DBMS_OUTPUT.PUT_LINE(v.NUMVEHICULE);
-    END LOOP;
-  END lister_vehicules;
-END;
-/
- 
 /*calculer pour chaque marque, son chiffre d'affaire*/
 alter type Tmarque add member function chiffre_affaire return number cascade;
 create or replace type body Tmarque as
   member function chiffre_affaire return number is
     ca number;
   BEGIN
-    select sum(i.COUNTINTERV) into ca
-    from table(select cast(multiset(
-                 select v.VEHICULE_INTERVENTIONS from table(
-	                  select m.MARQUE_MODELES from Tmarque m where m.NUMMARQUE = self.NUMMARQUE
-	                ) as Tset_intervenrions)
-	  ) i;
-	    return ca;
+    Select CAST(MULTISET( select sum(deref(deref(deref(value(m)).MODELE_VEHICULES).VEHICULE_INTERVENTIONS).COUTINTERV)
+                      from table(self.MARQUE_MODELES) m
+                     ) as number
+		   ) into ca from dual; 
 	  END chiffre_affaire;
 	END;
 	/
